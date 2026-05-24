@@ -30,8 +30,8 @@ export default async function Home() {
   const tokenResponse = await getToken()
   const business: Business = await getBusiness(tokenResponse.token)
   const documentsResponse = await getDocuments(tokenResponse.token)
-  const clientsResponse = await getClients(tokenResponse.token).catch(() => ({ items: [] }))
-  const clients = ((clientsResponse.items ?? []) as { id: string; name: string }[])
+  const clientsItems = await getClients(tokenResponse.token).catch(() => [])
+  const clients = (clientsItems as { id: string; name: string }[])
     .sort((a, b) => a.name.localeCompare(b.name, 'he'))
 
   const documents = documentsResponse.items
