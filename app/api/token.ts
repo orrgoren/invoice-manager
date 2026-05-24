@@ -17,7 +17,8 @@ export async function getToken() {
   )
 
   if (!res.ok) {
-    throw new Error("Failed to fetch data")
+    const text = await res.text()
+    throw new Error(`Token fetch failed: ${res.status} ${res.statusText} — ${text}`)
   }
 
   return res.json()
