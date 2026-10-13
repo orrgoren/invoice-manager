@@ -20,7 +20,7 @@ This is a **Next.js 13 App Router** project (single-page, server-rendered) that 
 
 All data fetching happens server-side in `app/page.tsx` (an async Server Component):
 
-1. `app/api/token.ts` — authenticates with the Green Invoice API using `GREEN_INVOICE_API_KEY` and `GREEN_INVOICE_SECRET` env vars, returning a bearer token (cached 1 hour via `next: { revalidate: 3600 }`)
+1. `app/api/token.ts` — authenticates via Morning's OAuth endpoint using `GREEN_INVOICE_API_KEY` (client_id) and `GREEN_INVOICE_SECRET` (client_secret) env vars, returning `{ token }` (cached 55 min via `next: { revalidate: 3300 }`; tokens are valid 1 hour)
 2. `app/api/business.ts` — fetches the authenticated business profile
 3. `app/api/documents.ts` — searches for open documents (status `[0]`), types `100` (orders) and `305` (invoices), from 2022-01-01 to today (no cache, always fresh)
 
@@ -30,7 +30,7 @@ All TypeScript interfaces for the API responses live in `app/api/interfaces.ts` 
 
 Base URL: `https://api.greeninvoice.co.il/api/v1`
 
-**Authentication** — `POST /account/token` with `{ id, secret }`. Returns `{ token }`. Token cached 1 hour.
+**Authentication** — `POST https://api.morning.co/idp/v1/oauth/token` (separate auth host; sandbox: `https://api.sandbox.morning.dev`) with `{ grant_type: "client_credentials", client_id, client_secret }`. Returns `{ accessToken, expiresAt }`; token valid 1 hour. The old `POST /account/token` was blocked on 2026-10-14. Full OpenAPI spec: `https://developers.morning.co/docs/openapi.bundled.json`.
 
 **`POST /documents/search`** — body fields (all optional):
 
